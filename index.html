@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeCity - Instant Incident Reporting</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+  
+  <style>
+    /* Additional styles for improved UI */
+    body {
+      background: linear-gradient(135deg, #0a0f1e 0%, #1a1f35 50%, #0a0f1e 100%);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Animated background */
+    body::before {
+      content: '';
+      position: fixed;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: moveBackground 60s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes moveBackground {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 50px); }
+    }
+
+    .hero-modern {
+      text-align: center;
+      padding: 80px 20px 60px;
+      position: relative;
+      margin-bottom: 60px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 50px;
+      color: #60a5fa;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    .hero-title-modern {
+      font-size: 4rem;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      background: linear-gradient(135deg, #ffffff 0%, #60a5fa 50%, #3b82f6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeIn 1s ease-out 0.2s both;
+    }
+
+    .hero-subtitle-modern {
+      font-size: 1.5rem;
+      color: var(--text-tertiary);
+      max-width: 800px;
+      margin: 0 auto 40px;
+      animation: fadeIn 1s ease-out 0.4s both;
+    }
+
+    /* Quick action cards - centered */
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 1000px;
+      margin: 0 auto 60px;
+      padding: 0 20px;
+    }
+
+    .action-card {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(51, 65, 85, 0.5);
+      border-radius: 24px;
+      padding: 32px;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.8s ease-out both;
+    }
+
+    .action-card:nth-child(1) { animation-delay: 0.2s; }
+    .action-card:nth-child(2) { animation-delay: 0.3s; }
+    .action-card:nth-child(3) { animation-delay: 0.4s; }
+
+    .action-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, var(--card-color), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .action-card:hover {
+      transform: translateY(-12px) scale(1.02);
+      border-color: var(--card-color);
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4), 0 0 80px var(--card-glow);
+    }
+
+    .action-card:hover::before {
+      opacity: 1;
+    }
+
+    .action-card.police { --card-color: #3b82f6; --card-glow: rgba(59, 130, 246, 0.3); }
+    .action-card.medical { --card-color: #ef4444; --card-glow: rgba(239, 68, 68, 0.3); }
+    .action-card.infrastructure { --card-color: #f59e0b; --card-glow: rgba(245, 158, 11, 0.3); }
+
+    .action-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 24px var(--card-glow));
+      display: block;
+    }
+
+    .action-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
+
+    .action-desc {
+      color: var(--text-tertiary);
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .action-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--card-color), var(--card-color));
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Live stats bar */
+    .live-stats {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(51, 65, 85, 0.5);
+      border-radius: 24px;
+      padding: 32px;
+      margin: 0 20px 60px;
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px;
+    }
+
+    .stat-box {
+      text-align: center;
+      padding: 24px;
+      background: rgba(30, 41, 59, 0.5);
+      border: 2px solid rgba(51, 65, 85, 0.5);
+      border-radius: 16px;
+      transition: all 0.3s;
+    }
+
+    .stat-box:hover {
+      border-color: var(--stat-color);
+      transform: translateY(-4px);
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--stat-color), var(--stat-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      color: var(--text-tertiary);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.875rem;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-box.police { --stat-color: #3b82f6; --stat-light: #60a5fa; }
+    .stat-box.medical { --stat-color: #ef4444; --stat-light: #f87171; }
+    .stat-box.infrastructure { --stat-color: #f59e0b; --stat-light: #fbbf24; }
+    .stat-box.total { --stat-color: #8b5cf6; --stat-light: #a78bfa; }
+
+    /* Quick links */
+    .quick-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 60px;
+      flex-wrap: wrap;
+      padding: 0 20px;
+    }
+
+    .quick-link {
+      padding: 12px 24px;
+      background: rgba(51, 65, 85, 0.5);
+      border: 2px solid rgba(51, 65, 85, 0.5);
+      border-radius: 12px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .quick-link:hover {
+      background: rgba(59, 130, 246, 0.1);
+      border-color: #3b82f6;
+      color: #60a5fa;
+      transform: translateY(-2px);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-title-modern {
+        font-size: 2.5rem;
+      }
+
+      .hero-subtitle-modern {
+        font-size: 1.1rem;
+      }
+
+      .quick-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero Section -->
+  <div class="hero-modern">
+    <div class="hero-badge">
+      <span>🛡️</span>
+      <span>Making Communities Safer</span>
+    </div>
+    
+    <h1 class="hero-title-modern">Report. Track. Resolve.</h1>
+    
+    <p class="hero-subtitle-modern">
+      Instant incident reporting with AI-powered analytics and real-time tracking
+    </p>
+  </div>
+
+  <!-- Quick Action Cards -->
+  <div class="quick-actions">
+    <div class="action-card police" onclick="handlePoliceReport()">
+      <span class="action-icon">🚔</span>
+      <h3 class="action-title">Police</h3>
+      <p class="action-desc">Report crimes, accidents, or suspicious activities instantly</p>
+      <button class="action-btn">Report Now</button>
+    </div>
+
+    <div class="action-card medical" onclick="handleMedicalReport()">
+      <span class="action-icon">🚑</span>
+      <h3 class="action-title">Medical</h3>
+      <p class="action-desc">Emergency medical assistance and health incidents</p>
+      <button class="action-btn">Report Now</button>
+    </div>
+
+    <div class="action-card infrastructure" onclick="handleInfrastructureReport()">
+      <span class="action-icon">🏗️</span>
+      <h3 class="action-title">Infrastructure</h3>
+      <p class="action-desc">Roads, streetlights, water, garbage, and civic issues</p>
+      <button class="action-btn">Report Now</button>
+    </div>
+  </div>
+
+  <!-- Live Statistics -->
+  <div class="live-stats">
+    <h2 style="text-align: center; font-size: 2rem; font-weight: 800; margin-bottom: 32px; color: var(--text-primary);">📊 Live Statistics</h2>
+    <div class="stats-grid">
+      <div class="stat-box police">
+        <div class="stat-number" id="statPolice">0</div>
+        <div class="stat-label">Police Reports</div>
+      </div>
+      <div class="stat-box medical">
+        <div class="stat-number" id="statMedical">0</div>
+        <div class="stat-label">Medical Cases</div>
+      </div>
+      <div class="stat-box infrastructure">
+        <div class="stat-number" id="statInfra">0</div>
+        <div class="stat-label">Infrastructure</div>
+      </div>
+      <div class="stat-box total">
+        <div class="stat-number" id="statTotal">0</div>
+        <div class="stat-label">Total Reports</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Links -->
+  <div class="quick-links">
+    <a href="heatmap-page.html" class="quick-link">
+      <span>🗺️</span>
+      <span>View Map</span>
+    </a>
+    <a href="profile-login.html" class="quick-link">
+      <span>👤</span>
+      <span>Staff Login</span>
+    </a>
+    <a href="admin-dashboard.html" class="quick-link">
+      <span>👑</span>
+      <span>Admin Dashboard</span>
+    </a>
+  </div>
+
+  <!-- Footer -->
+  <footer style="text-align: center; padding: 40px 20px; color: var(--text-muted); border-top: 1px solid rgba(51, 65, 85, 0.5); margin-top: 60px;">
+    <p style="margin-bottom: 8px;">🛡️ SafeCity - Powered by AI & Community</p>
+    <p style="font-size: 0.875rem;">Emergency: Police 100 | Ambulance 108 | Fire 101</p>
+    <p style="font-size: 0.75rem; margin-top: 16px;">&copy; 2025 Citizen Safety Platform. All rights reserved.</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/geolocation.js"></script>
+  <script src="js/media.js"></script>
+  <script src="js/police.js"></script>
+  <script src="js/medical.js"></script>
+  <script src="js/infrastructure.js"></script>
+  <script src="js/profile-manager.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/main.js"></script>
+
+  <script>
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('🚀 SafeCity Platform Loading...');
+      updateStatistics();
+      setInterval(updateStatistics, 10000); // Update every 10 seconds
+    });
+
+    // Update statistics
+    function updateStatistics() {
+      try {
+        if (typeof Storage === 'undefined') return;
+
+        const stats = Storage.getStatistics();
+        
+        document.getElementById('statPolice').textContent = stats.police || 0;
+        document.getElementById('statMedical').textContent = stats.medical || 0;
+        document.getElementById('statInfra').textContent = stats.infrastructure || 0;
+        document.getElementById('statTotal').textContent = stats.total || 0;
+      } catch (error) {
+        console.error('Update stats error:', error);
+      }
+    }
+
+    // Report handlers
+    async function handlePoliceReport() {
+      try {
+        if (typeof PoliceReport === 'undefined') {
+          alert('Police module not loaded');
+          return;
+        }
+        await PoliceReport.capture();
+        updateStatistics();
+      } catch (error) {
+        console.error('Police report error:', error);
+      }
+    }
+
+    async function handleMedicalReport() {
+      try {
+        if (typeof MedicalReport === 'undefined') {
+          alert('Medical module not loaded');
+          return;
+        }
+        await MedicalReport.capture();
+        updateStatistics();
+      } catch (error) {
+        console.error('Medical report error:', error);
+      }
+    }
+
+    async function handleInfrastructureReport() {
+      try {
+        if (typeof InfrastructureReport === 'undefined') {
+          alert('Infrastructure module not loaded');
+          return;
+        }
+        await InfrastructureReport.capture();
+        updateStatistics();
+      } catch (error) {
+        console.error('Infrastructure report error:', error);
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Dashboard - Citizen Safety Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: #f1f5f9;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .dashboard-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(51, 65, 85, 0.5);
+      border-radius: 20px;
+      padding: 32px;
+      margin-bottom: 32px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .user-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .user-details {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .user-avatar {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #3b82f6, #60a5fa);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(51, 65, 85, 0.5);
+      border-radius: 16px;
+      padding: 24px;
+      transition: all 0.3s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      color: #94a3b8;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .reports-section {
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(51, 65, 85, 0.5);
+      border-radius: 20px;
+      padding: 32px;
+      margin-bottom: 32px;
+    }
+
+    .report-card {
+      background: rgba(30, 41, 59, 0.8);
+      border: 2px solid rgba(51, 65, 85, 0.5);
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.3s;
+      cursor: pointer;
+      margin-bottom: 16px;
+    }
+
+    .report-card:hover {
+      border-color: #3b82f6;
+      transform: translateX(4px);
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 0.95rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #60a5fa);
+      color: white;
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #64748b;
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-container">
+    <!-- Header -->
+    <div class="header">
+      <div class="user-info">
+        <div class="user-details">
+          <div class="user-avatar" id="userAvatar">?</div>
+          <div>
+            <h1 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 4px;" id="userName">Loading...</h1>
+            <p style="color: #94a3b8; font-size: 0.95rem;" id="userRole">Staff Dashboard</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <button onclick="refreshDashboard()" class="btn btn-primary">🔄 Refresh</button>
+          <button onclick="handleLogout()" class="btn btn-danger">🚪 Logout</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="stats-grid" id="statsGrid">
+      <!-- Stats will be populated by JavaScript -->
+    </div>
+
+    <!-- Reports Section -->
+    <div class="reports-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+        <h2 style="font-size: 1.5rem; font-weight: 700;">My Reports</h2>
+        <input type="text" id="searchBox" placeholder="🔍 Search reports..." style="padding: 10px 16px; background: rgba(30, 41, 59, 0.8); border: 2px solid rgba(51, 65, 85, 0.5); border-radius: 8px; color: #f1f5f9; width: 300px;" oninput="filterReports()">
+      </div>
+
+      <!-- Reports List -->
+      <div id="reportsList">
+        <div class="empty-state">
+          <div class="empty-state-icon">📊</div>
+          <h3 style="font-size: 1.25rem; margin-bottom: 8px;">Loading Reports...</h3>
+          <p>Please wait while we fetch your reports</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for report details -->
+  <div id="dynamicModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px); z-index: 9999; padding: 20px; overflow-y: auto; align-items: center; justify-content: center;">
+    <div class="modal-content" style="background: #1e293b; border: 2px solid #334155; border-radius: 20px; padding: 32px; max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h2 id="modalTitle" style="font-size: 1.5rem; font-weight: 700;"></h2>
+        <button class="modal-close" onclick="closeModal()" style="background: rgba(239, 68, 68, 0.2); border: none; color: #ef4444; font-size: 1.5rem; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;">&times;</button>
+      </div>
+      <div id="modalBody"></div>
+      <div id="modalActions" style="display: flex; gap: 12px; margin-top: 24px;"></div>
+    </div>
+  </div>
+
+  <!-- Load Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/profile-manager.js"></script>
+
+  <script>
+    let allReports = [];
+    let currentUser = null;
+
+    // Initialize dashboard
+    window.addEventListener('DOMContentLoaded', () => {
+      console.log('🚀 Staff Dashboard Loading...');
+      
+      // Check authentication
+      if (!checkAuthentication()) {
+        return;
+      }
+      
+      // Load dashboard
+      loadDashboard();
+    });
+
+    // Check authentication
+    function checkAuthentication() {
+      try {
+        if (typeof ProfileManager === 'undefined') {
+          console.error('ProfileManager not loaded');
+          showLoginRequired();
+          return false;
+        }
+
+        if (!ProfileManager.isAuthenticated()) {
+          console.warn('Not authenticated');
+          showLoginRequired();
+          return false;
+        }
+
+        currentUser = ProfileManager.getCurrentUser();
+        
+        if (!currentUser) {
+          console.warn('No current user');
+          showLoginRequired();
+          return false;
+        }
+
+        // If admin, redirect to admin dashboard
+        if (ProfileManager.isAdmin()) {
+          console.log('Admin detected, redirecting...');
+          window.location.href = 'admin-dashboard.html';
+          return false;
+        }
+
+        console.log('✅ Staff authenticated:', currentUser.username, '- Role:', currentUser.role);
+        return true;
+      } catch (error) {
+        console.error('Authentication check error:', error);
+        showLoginRequired();
+        return false;
+      }
+    }
+
+    function showLoginRequired() {
+      document.body.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+          <div style="text-align: center; padding: 40px; background: rgba(30, 41, 59, 0.8); border: 2px solid rgba(51, 65, 85, 0.5); border-radius: 20px; max-width: 500px;">
+            <div style="font-size: 4rem; margin-bottom: 20px;">🔒</div>
+            <h2 style="font-size: 1.5rem; margin-bottom: 16px; color: #f1f5f9;">Staff Login Required</h2>
+            <p style="color: #94a3b8; margin-bottom: 24px;">Please login to access your dashboard</p>
+            <button onclick="window.location.href='profile-login.html'" style="padding: 12px 32px; background: linear-gradient(135deg, #3b82f6, #60a5fa); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 1rem;">
+              Go to Login
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function loadDashboard() {
+      try {
+        // Update user info
+        updateUserInfo();
+
+        // Check if Storage is loaded
+        if (typeof Storage === 'undefined') {
+          console.error('Storage module not loaded');
+          alert('Error: Storage module not loaded. Please refresh the page.');
+          return;
+        }
+
+        // Get accessible reports based on role
+        if (typeof ProfileManager !== 'undefined' && ProfileManager.getAccessibleReports) {
+          const accessibleReports = ProfileManager.getAccessibleReports();
+          allReports = [
+            ...(accessibleReports.police || []),
+            ...(accessibleReports.medical || []),
+            ...(accessibleReports.infrastructure || [])
+          ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        } else {
+          // Fallback - get reports by role
+          allReports = Storage.getAllReports(currentUser.role) || [];
+        }
+
+        // Update statistics
+        updateStatistics();
+
+        // Display reports
+        displayReports(allReports);
+
+        console.log('✅ Dashboard loaded:', allReports.length, 'reports');
+      } catch (error) {
+        console.error('Load dashboard error:', error);
+        alert('Failed to load dashboard: ' + error.message);
+      }
+    }
+
+    function updateUserInfo() {
+      if (!currentUser) return;
+
+      // Update avatar
+      const avatar = document.getElementById('userAvatar');
+      if (avatar) {
+        avatar.textContent = currentUser.fullName?.charAt(0).toUpperCase() || currentUser.username?.charAt(0).toUpperCase() || '?';
+      }
+
+      // Update name
+      const userName = document.getElementById('userName');
+      if (userName) {
+        userName.textContent = currentUser.fullName || currentUser.username || 'Staff Member';
+      }
+
+      // Update role
+      const userRole = document.getElementById('userRole');
+      if (userRole) {
+        const roleIcons = { police: '🚔', medical: '🚑', infrastructure: '🏗️' };
+        const roleNames = { police: 'Police', medical: 'Medical', infrastructure: 'Infrastructure' };
+        userRole.textContent = `${roleIcons[currentUser.role] || '👤'} ${roleNames[currentUser.role] || 'Staff'} Dashboard`;
+      }
+    }
+
+    function updateStatistics() {
+      const statsGrid = document.getElementById('statsGrid');
+      if (!statsGrid) return;
+
+      const pending = allReports.filter(r => r.status === 'pending').length;
+      const inProgress = allReports.filter(r => r.status === 'in-progress').length;
+      const resolved = allReports.filter(r => r.status === 'resolved').length;
+
+      const roleColors = {
+        police: '#3b82f6',
+        medical: '#ef4444',
+        infrastructure: '#f59e0b'
+      };
+      const color = roleColors[currentUser.role] || '#3b82f6';
+
+      statsGrid.innerHTML = `
+        <div class="stat-card" style="border-color: ${color};">
+          <div class="stat-value" style="color: ${color};">${allReports.length}</div>
+          <div class="stat-label">Total Reports</div>
+        </div>
+        <div class="stat-card" style="border-color: #f59e0b;">
+          <div class="stat-value" style="color: #f59e0b;">${pending}</div>
+          <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card" style="border-color: #3b82f6;">
+          <div class="stat-value" style="color: #3b82f6;">${inProgress}</div>
+          <div class="stat-label">In Progress</div>
+        </div>
+        <div class="stat-card" style="border-color: #22c55e;">
+          <div class="stat-value" style="color: #22c55e;">${resolved}</div>
+          <div class="stat-label">Resolved</div>
+        </div>
+      `;
+    }
+
+    function displayReports(reports) {
+      const reportsList = document.getElementById('reportsList');
+      if (!reportsList) return;
+
+      if (reports.length === 0) {
+        reportsList.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <h3 style="font-size: 1.25rem; margin-bottom: 8px;">No Reports Yet</h3>
+            <p>You don't have any reports assigned to you</p>
+          </div>
+        `;
+        return;
+      }
+
+      const colors = { police: '#3b82f6', medical: '#ef4444', infrastructure: '#f59e0b' };
+      const icons = { police: '🚔', medical: '🚑', infrastructure: '🏗️' };
+
+      reportsList.innerHTML = reports.map(report => {
+        const color = colors[report.type] || '#64748b';
+        const icon = icons[report.type] || '📋';
+        
+        return `
+          <div class="report-card" onclick="viewReport('${report.type}', '${report.id}')">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+              <div style="display: flex; gap: 12px; align-items: center;">
+                <span style="font-size: 1.5rem;">${icon}</span>
+                <div>
+                  <div style="font-weight: 700; color: ${color};">${report.id}</div>
+                  <div style="color: #94a3b8; font-size: 0.875rem; text-transform: capitalize;">${report.type}</div>
+                </div>
+              </div>
+              <span style="padding: 4px 12px; background: rgba(${
+                report.status === 'resolved' ? '34,197,94' :
+                report.status === 'in-progress' ? '245,158,11' : '239,68,68'
+              }, 0.2); border: 1px solid ${
+                report.status === 'resolved' ? '#22c55e' :
+                report.status === 'in-progress' ? '#f59e0b' : '#ef4444'
+              }; border-radius: 20px; color: ${
+                report.status === 'resolved' ? '#22c55e' :
+                report.status === 'in-progress' ? '#f59e0b' : '#ef4444'
+              }; font-size: 0.75rem; text-transform: uppercase; height: fit-content;">${report.status || 'pending'}</span>
+            </div>
+            <div style="color: #94a3b8; font-size: 0.875rem;">
+              <div><strong>Date:</strong> ${report.timestamp?.full || new Date(report.createdAt).toLocaleString() || 'N/A'}</div>
+              ${report.location?.isReal ? `<div><strong>Location:</strong> ${report.location.latitude.toFixed(4)}, ${report.location.longitude.toFixed(4)}</div>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function viewReport(type, id) {
+      const report = Storage.getReportById(type, id);
+      if (!report) {
+        alert('Report not found');
+        return;
+      }
+
+      const colors = { police: '#3b82f6', medical: '#ef4444', infrastructure: '#f59e0b' };
+      const color = colors[type] || '#64748b';
+
+      showModal(
+        `Report: ${id}`,
+        `
+          <div style="display: grid; gap: 16px;">
+            ${report.photo ? `<img src="${report.photo}" style="width: 100%; max-height: 400px; object-fit: contain; border-radius: 12px; border: 2px solid rgba(51, 65, 85, 0.5);">` : ''}
+            
+            <div style="padding: 16px; background: rgba(${color === '#3b82f6' ? '59,130,246' : color === '#ef4444' ? '239,68,68' : '245,158,11'}, 0.1); border-left: 4px solid ${color}; border-radius: 8px;">
+              <div style="font-weight: 700; font-size: 1.1rem; color: ${color}; text-transform: capitalize; margin-bottom: 12px;">${type} Report</div>
+              <div style="display: grid; gap: 8px; color: #cbd5e1;">
+                <div><strong>Report ID:</strong> ${report.id}</div>
+                <div><strong>Status:</strong> <span style="text-transform: capitalize;">${report.status || 'pending'}</span></div>
+                <div><strong>Created:</strong> ${report.timestamp?.full || new Date(report.createdAt).toLocaleString()}</div>
+                ${report.location?.isReal ? `
+                  <div><strong>Location:</strong> ${report.location.latitude.toFixed(6)}, ${report.location.longitude.toFixed(6)}</div>
+                  <a href="https://www.google.com/maps?q=${report.location.latitude},${report.location.longitude}" target="_blank" style="color: #3b82f6; text-decoration: none;">📍 View on Map</a>
+                ` : ''}
+              </div>
+            </div>
+
+            <div>
+              <label style="display: block; margin-bottom: 8px; font-weight: 600;">Update Status</label>
+              <select id="newStatus" style="width: 100%; padding: 10px; background: rgba(30, 41, 59, 0.8); border: 2px solid rgba(51, 65, 85, 0.5); border-radius: 8px; color: #f1f5f9;">
+                <option value="pending" ${report.status === 'pending' ? 'selected' : ''}>Pending</option>
+                <option value="in-progress" ${report.status === 'in-progress' ? 'selected' : ''}>In Progress</option>
+                <option value="resolved" ${report.status === 'resolved' ? 'selected' : ''}>Resolved</option>
+              </select>
+            </div>
+          </div>
+        `,
+        [
+          { label: 'Update Status', action: () => updateReportStatus(type, id) },
+          { label: 'Close', action: closeModal }
+        ]
+      );
+    }
+
+    function updateReportStatus(type, id) {
+      const newStatus = document.getElementById('newStatus')?.value;
+      if (!newStatus) return;
+
+      const success = Storage.updateReportStatus(type, id, newStatus);
+      
+      if (success) {
+        if (typeof Utils !== 'undefined' && Utils.showToast) {
+          Utils.showToast('Status updated successfully', 'success');
+        } else {
+          alert('✅ Status updated successfully');
+        }
+        closeModal();
+        refreshDashboard();
+      } else {
+        alert('Failed to update status');
+      }
+    }
+
+    function filterReports() {
+      const searchTerm = document.getElementById('searchBox')?.value.toLowerCase() || '';
+      
+      const filtered = allReports.filter(r => 
+        r.id.toLowerCase().includes(searchTerm) ||
+        r.type.toLowerCase().includes(searchTerm) ||
+        (r.status && r.status.toLowerCase().includes(searchTerm))
+      );
+
+      displayReports(filtered);
+    }
+
+    function showModal(title, body, actions) {
+      const modal = document.getElementById('dynamicModal');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalBody = document.getElementById('modalBody');
+      const modalActions = document.getElementById('modalActions');
+
+      modalTitle.textContent = title;
+      modalBody.innerHTML = body;
+      
+      modalActions.innerHTML = actions.map(action => `
+        <button class="btn btn-primary" onclick="(${action.action.toString()})()">${action.label}</button>
+      `).join('');
+
+      modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('dynamicModal').style.display = 'none';
+    }
+
+    function refreshDashboard() {
+      location.reload();
+    }
+
+    function handleLogout() {
+      if (confirm('Are you sure you want to logout?')) {
+        if (typeof ProfileManager !== 'undefined') {
+          ProfileManager.logout();
+        }
+        window.location.href = 'profile-login.html';
+      }
+    }
+  </script>
+
+</body>
+</html>
