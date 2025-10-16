@@ -139,6 +139,58 @@
       height: 100%;
     }
 
+    /* NEW: Search box styling */
+    .search-container {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 1001;
+      display: flex;
+      gap: 8px;
+      background: rgba(30, 41, 59, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 12px;
+      border-radius: 12px;
+      border: 2px solid #475569;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .search-input {
+      padding: 8px 12px;
+      background: #1e293b;
+      border: 2px solid #475569;
+      border-radius: 8px;
+      color: #f1f5f9;
+      font-size: 0.875rem;
+      width: 200px;
+      transition: all 0.3s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      width: 250px;
+    }
+
+    .search-btn {
+      padding: 8px 12px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .search-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    /* Map Legend - NOW COLLAPSIBLE */
     .map-legend {
       position: absolute;
       bottom: 40px;
@@ -151,13 +203,57 @@
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
       z-index: 1000;
       min-width: 200px;
+      transition: all 0.3s ease;
+    }
+
+    .map-legend.collapsed {
+      padding: 12px;
+      min-width: auto;
+    }
+
+    .map-legend.collapsed .legend-content {
+      display: none;
+    }
+
+    .legend-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      cursor: pointer;
+    }
+
+    .map-legend.collapsed .legend-header {
+      margin-bottom: 0;
+    }
+
+    .legend-toggle-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0;
+      transition: transform 0.3s;
+    }
+
+    .legend-toggle-btn:hover {
+      color: #f1f5f9;
+    }
+
+    .map-legend.collapsed .legend-toggle-btn {
+      transform: rotate(180deg);
     }
 
     .legend-title {
       font-weight: 700;
       font-size: 0.95rem;
-      margin-bottom: 12px;
       color: #f1f5f9;
+    }
+
+    .legend-content hr {
+      border: 1px solid #475569;
+      margin: 12px 0;
     }
 
     .legend-item {
@@ -181,6 +277,7 @@
       font-size: 0.875rem;
     }
 
+    /* Stats Bar - NOW COLLAPSIBLE */
     .stats-bar {
       position: absolute;
       top: 20px;
@@ -192,6 +289,56 @@
       border: 2px solid #475569;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
       z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .stats-bar.collapsed {
+      padding: 12px;
+    }
+
+    .stats-bar.collapsed .stats-grid {
+      display: none;
+    }
+
+    .stats-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      cursor: pointer;
+    }
+
+    .stats-bar.collapsed .stats-header {
+      margin-bottom: 0;
+    }
+
+    .stats-title {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stats-toggle-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0;
+      transition: transform 0.3s;
+    }
+
+    .stats-toggle-btn:hover {
+      color: #f1f5f9;
+    }
+
+    .stats-bar.collapsed .stats-toggle-btn {
+      transform: rotate(180deg);
+    }
+
+    .stats-grid {
       display: grid;
       gap: 12px;
       grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -215,6 +362,77 @@
       margin-top: 4px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+    }
+
+    /* NEW: Refresh Indicator */
+    .refresh-indicator {
+      position: absolute;
+      top: 90px;
+      left: 20px;
+      background: rgba(30, 41, 59, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 2px solid #475569;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      z-index: 999;
+      font-size: 0.8rem;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .refresh-indicator .pulse {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* NEW: Map Control Buttons */
+    .map-controls {
+      position: absolute;
+      bottom: 40px;
+      left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 1000;
+    }
+
+    .map-control-btn {
+      padding: 10px;
+      background: rgba(30, 41, 59, 0.95);
+      backdrop-filter: blur(10px);
+      border: 2px solid #475569;
+      border-radius: 8px;
+      color: #f1f5f9;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .map-control-btn:hover {
+      background: rgba(59, 130, 246, 0.3);
+      border-color: #3b82f6;
+      transform: translateX(3px);
+    }
+
+    .map-control-btn:active {
+      transform: translateX(3px) scale(0.95);
     }
 
     /* Custom Popup Styles */
@@ -306,7 +524,20 @@
         padding: 6px 10px;
       }
 
-      /* FIX: Reduce legend icon sizes on mobile */
+      .search-container {
+        top: 10px;
+        right: 10px;
+        padding: 8px;
+      }
+
+      .search-input {
+        width: 150px;
+      }
+
+      .search-input:focus {
+        width: 180px;
+      }
+
       .legend-color {
         width: 18px;
         height: 18px;
@@ -321,7 +552,6 @@
 
       .legend-title {
         font-size: 0.85rem;
-        margin-bottom: 8px;
       }
 
       .map-legend {
@@ -331,14 +561,15 @@
         right: 10px;
       }
 
-      /* FIX: Reduce stats bar values and positioning */
       .stats-bar {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-        padding: 12px;
         top: 10px;
         left: 10px;
-        right: 10px;
+        padding: 12px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
       }
 
       .stat-value {
@@ -348,9 +579,26 @@
       .stat-label {
         font-size: 0.65rem;
       }
+
+      .refresh-indicator {
+        top: 70px;
+        left: 10px;
+        font-size: 0.7rem;
+        padding: 6px 12px;
+      }
+
+      .map-controls {
+        bottom: 20px;
+        left: 10px;
+      }
+
+      .map-control-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+      }
     }
 
-    /* EXTRA SMALL DEVICES (< 480px) */
     @media (max-width: 480px) {
       .heatmap-title {
         font-size: 1rem;
@@ -361,7 +609,14 @@
         padding: 5px 8px;
       }
 
-      /* FIX: Further reduce icon sizes */
+      .search-input {
+        width: 120px;
+      }
+
+      .search-input:focus {
+        width: 150px;
+      }
+
       .legend-color {
         width: 16px;
         height: 16px;
@@ -381,11 +636,13 @@
         min-width: 140px;
       }
 
-      /* FIX: Stack stats vertically on very small screens */
       .stats-bar {
+        padding: 10px;
+      }
+
+      .stats-grid {
         grid-template-columns: repeat(3, 1fr);
         gap: 6px;
-        padding: 10px;
       }
 
       .stat-value {
@@ -394,6 +651,12 @@
 
       .stat-label {
         font-size: 0.6rem;
+      }
+
+      .map-control-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
       }
     }
   </style>
@@ -455,45 +718,79 @@
     <div class="heatmap-wrapper">
       <div id="map"></div>
 
-      <!-- Statistics Overlay -->
-      <div class="stats-bar">
-        <div class="stat-item">
-          <div class="stat-value" id="totalReports">0</div>
-          <div class="stat-label">Total Reports</div>
+      <!-- NEW FEATURE: Search Box -->
+      <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search location..." />
+        <button onclick="searchLocation()" class="search-btn">🔍</button>
+      </div>
+
+      <!-- NEW FEATURE: Live Refresh Indicator -->
+      <div class="refresh-indicator">
+        <div class="pulse"></div>
+        <span id="refreshTimer">Last updated: just now</span>
+      </div>
+
+      <!-- NEW FEATURE: Map Control Buttons -->
+      <div class="map-controls">
+        <button class="map-control-btn" onclick="locateUser()" title="Find My Location">
+          📍
+        </button>
+        <button class="map-control-btn" onclick="fitAllReports()" title="Zoom to All Reports">
+          🎯
+        </button>
+      </div>
+
+      <!-- Statistics Overlay - NOW COLLAPSIBLE -->
+      <div class="stats-bar" id="statsBar">
+        <div class="stats-header" onclick="toggleStatsBar()">
+          <div class="stats-title">📊 Statistics</div>
+          <button class="stats-toggle-btn">▼</button>
         </div>
-        <div class="stat-item">
-          <div class="stat-value" id="displayedReports" style="color: #22c55e;">0</div>
-          <div class="stat-label">Displayed</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-value" id="pendingReports" style="color: #f59e0b;">0</div>
-          <div class="stat-label">Pending</div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value" id="totalReports">0</div>
+            <div class="stat-label">Total Reports</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="displayedReports" style="color: #22c55e;">0</div>
+            <div class="stat-label">Displayed</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="pendingReports" style="color: #f59e0b;">0</div>
+            <div class="stat-label">Pending</div>
+          </div>
         </div>
       </div>
 
-      <!-- Legend -->
-      <div class="map-legend">
-        <div class="legend-title">📍 Report Types</div>
-        <div class="legend-item">
-          <div class="legend-color" style="background: #3b82f6;">🚔</div>
-          <span>Police</span>
+      <!-- Legend - NOW COLLAPSIBLE -->
+      <div class="map-legend" id="mapLegend">
+        <div class="legend-header" onclick="toggleLegend()">
+          <div class="legend-title">📍 Legend</div>
+          <button class="legend-toggle-btn">▼</button>
         </div>
-        <div class="legend-item">
-          <div class="legend-color" style="background: #ef4444;">🚑</div>
-          <span>Medical</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-color" style="background: #f59e0b;">🏗️</div>
-          <span>Infrastructure</span>
-        </div>
-        <hr style="border: 1px solid #475569; margin: 12px 0;">
-        <div class="legend-title" style="margin-top: 12px;">🔥 Heat Intensity</div>
-        <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
-          <div style="flex: 1; height: 20px; background: linear-gradient(90deg, #00FF00, #FFFF00, #FFA500, #FF0000); border-radius: 4px; border: 1px solid white;"></div>
-        </div>
-        <div style="display: flex; justify-content: space-between; margin-top: 4px; font-size: 0.75rem; color: #94a3b8;">
-          <span>Low</span>
-          <span>High</span>
+        <div class="legend-content">
+          <div style="margin-bottom: 12px; font-weight: 600; font-size: 0.85rem; color: #cbd5e1;">Report Types</div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #3b82f6;">🚔</div>
+            <span>Police</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #ef4444;">🚑</div>
+            <span>Medical</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #f59e0b;">🏗️</div>
+            <span>Infrastructure</span>
+          </div>
+          <hr style="border: 1px solid #475569; margin: 12px 0;">
+          <div style="margin-top: 12px; margin-bottom: 8px; font-weight: 600; font-size: 0.85rem; color: #cbd5e1;">🔥 Heat Intensity</div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+            <div style="flex: 1; height: 20px; background: linear-gradient(90deg, #00FF00, #FFFF00, #FFA500, #FF0000); border-radius: 4px; border: 1px solid white;"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-top: 4px; font-size: 0.75rem; color: #94a3b8;">
+            <span>Low</span>
+            <span>High</span>
+          </div>
         </div>
       </div>
     </div>
@@ -519,24 +816,39 @@
   <script>
     let allReports = [];
     let heatmapVisible = true;
+    let lastRefreshTime = Date.now();
 
-    // Initialize map and load data
+    // PRESERVE ORIGINAL INITIALIZATION - DO NOT MODIFY
     document.addEventListener('DOMContentLoaded', () => {
       console.log('🗺️ Initializing heatmap page...');
 
-      // Initialize map
+      // Initialize map - EXACT ORIGINAL CODE
       HeatMap.initialize('map', {
         center: [12.9716, 77.5946], // Bangalore
         zoom: 12
       });
 
-      // Load reports
+      // Load reports - EXACT ORIGINAL CODE
       loadAllReports();
 
-      // Auto-refresh every 30 seconds
-      setInterval(loadAllReports, 30000);
+      // Start refresh timer for new feature
+      startRefreshTimer();
+
+      // Auto-refresh every 30 seconds - EXACT ORIGINAL CODE
+      setInterval(() => {
+        loadAllReports();
+        lastRefreshTime = Date.now();
+      }, 30000);
+
+      // Add Enter key listener for search
+      document.getElementById('searchInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          searchLocation();
+        }
+      });
     });
 
+    // PRESERVE ORIGINAL FUNCTION - DO NOT MODIFY
     function loadAllReports() {
       if (typeof Storage === 'undefined') {
         console.error('Storage module not loaded');
@@ -554,10 +866,11 @@
       // Update statistics
       updateStatistics();
 
-      // Load into map with current filters
+      // Load into map with current filters - EXACT ORIGINAL CODE
       HeatMap.loadReports(allReports, true);
     }
 
+    // PRESERVE ORIGINAL FUNCTION - DO NOT MODIFY
     function updateStatistics() {
       document.getElementById('totalReports').textContent = allReports.length;
 
@@ -568,6 +881,7 @@
       document.getElementById('pendingReports').textContent = pending;
     }
 
+    // PRESERVE ORIGINAL FUNCTIONS - DO NOT MODIFY
     function updateTimeFilter(value) {
       HeatMap.setFilter('timeRange', value);
       updateStatistics();
@@ -583,26 +897,25 @@
       updateStatistics();
     }
 
+    // ENHANCED: Better error handling and feedback
     function toggleHeatmapLayer() {
-      if (typeof HeatMap.toggleHeatmap === 'function') {
+      if (typeof HeatMap !== 'undefined' && typeof HeatMap.toggleHeatmap === 'function') {
         HeatMap.toggleHeatmap();
         heatmapVisible = !heatmapVisible;
-        
-        // Update button text
+
         const btn = document.getElementById('toggleHeatmapBtn');
         if (btn) {
           btn.innerHTML = heatmapVisible ? '🔥 Hide Heatmap' : '🔥 Show Heatmap';
         }
-        
-        // Show feedback
+
         if (typeof Utils !== 'undefined') {
           Utils.showToast(
-            heatmapVisible ? 'Heatmap layer enabled' : 'Heatmap layer disabled',
+            heatmapVisible ? 'Heatmap layer shown' : 'Heatmap layer hidden',
             'info'
           );
         }
       } else {
-        console.error('HeatMap.toggleHeatmap function not available');
+        console.error('HeatMap.toggleHeatmap not available');
         if (typeof Utils !== 'undefined') {
           Utils.showToast('Heatmap toggle unavailable', 'error');
         }
@@ -611,8 +924,183 @@
 
     function refreshMap() {
       loadAllReports();
+      lastRefreshTime = Date.now();
       if (typeof Utils !== 'undefined') {
         Utils.showToast('Map refreshed', 'success');
+      }
+    }
+
+    // NEW FEATURE: User Location Tracking
+    function locateUser() {
+      if (!navigator.geolocation) {
+        if (typeof Utils !== 'undefined') {
+          Utils.showToast('Geolocation not supported', 'error');
+        }
+        return;
+      }
+
+      if (typeof Utils !== 'undefined') {
+        Utils.showToast('Getting your location...', 'info');
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+
+          if (HeatMap && HeatMap.map) {
+            HeatMap.map.setView([lat, lng], 15);
+
+            L.marker([lat, lng], {
+              icon: L.divIcon({
+                className: 'user-location-marker',
+                html: '<div style="font-size: 24px;">📍</div>',
+                iconSize: [30, 30],
+                iconAnchor: [15, 30]
+              })
+            }).addTo(HeatMap.map)
+              .bindPopup('<strong>You are here!</strong>')
+              .openPopup();
+          }
+
+          if (typeof Utils !== 'undefined') {
+            Utils.showToast('Location found!', 'success');
+          }
+        },
+        (error) => {
+          let errorMsg = 'Unable to get location';
+          if (error.code === 1) errorMsg = 'Location permission denied';
+          else if (error.code === 2) errorMsg = 'Location unavailable';
+          else if (error.code === 3) errorMsg = 'Location request timeout';
+
+          if (typeof Utils !== 'undefined') {
+            Utils.showToast(errorMsg, 'error');
+          }
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    }
+
+    // NEW FEATURE: Search Location
+    function searchLocation() {
+      const query = document.getElementById('searchInput').value.trim();
+
+      if (!query) {
+        if (typeof Utils !== 'undefined') {
+          Utils.showToast('Please enter a location', 'warning');
+        }
+        return;
+      }
+
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`;
+
+      if (typeof Utils !== 'undefined') {
+        Utils.showToast('Searching...', 'info');
+      }
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data && data.length > 0) {
+            const result = data[0];
+            const lat = parseFloat(result.lat);
+            const lon = parseFloat(result.lon);
+
+            if (HeatMap && HeatMap.map) {
+              HeatMap.map.setView([lat, lon], 14);
+
+              L.marker([lat, lon], {
+                icon: L.divIcon({
+                  className: 'search-result-marker',
+                  html: '<div style="font-size: 24px;">🔍</div>',
+                  iconSize: [30, 30],
+                  iconAnchor: [15, 30]
+                })
+              }).addTo(HeatMap.map)
+                .bindPopup(`<strong>${result.display_name}</strong>`)
+                .openPopup();
+            }
+
+            if (typeof Utils !== 'undefined') {
+              Utils.showToast('Location found', 'success');
+            }
+          } else {
+            if (typeof Utils !== 'undefined') {
+              Utils.showToast('Location not found', 'warning');
+            }
+          }
+        })
+        .catch(error => {
+          console.error('Search error:', error);
+          if (typeof Utils !== 'undefined') {
+            Utils.showToast('Search failed', 'error');
+          }
+        });
+    }
+
+    // NEW FEATURE: Live Refresh Timer
+    function startRefreshTimer() {
+      setInterval(() => {
+        const elapsed = Date.now() - lastRefreshTime;
+        const seconds = Math.floor(elapsed / 1000);
+
+        let timeText;
+        if (seconds < 5) timeText = 'just now';
+        else if (seconds < 60) timeText = `${seconds}s ago`;
+        else timeText = `${Math.floor(seconds / 60)}m ago`;
+
+        const timerEl = document.getElementById('refreshTimer');
+        if (timerEl) {
+          timerEl.textContent = `Last updated: ${timeText}`;
+        }
+      }, 1000);
+    }
+
+    // NEW FEATURE: Toggle Stats Bar
+    function toggleStatsBar() {
+      const statsBar = document.getElementById('statsBar');
+      if (statsBar) {
+        statsBar.classList.toggle('collapsed');
+      }
+    }
+
+    // NEW FEATURE: Toggle Legend
+    function toggleLegend() {
+      const legend = document.getElementById('mapLegend');
+      if (legend) {
+        legend.classList.toggle('collapsed');
+      }
+    }
+
+    // NEW FEATURE: Fit All Reports
+    function fitAllReports() {
+      if (!allReports || allReports.length === 0) {
+        if (typeof Utils !== 'undefined') {
+          Utils.showToast('No reports to display', 'warning');
+        }
+        return;
+      }
+
+      const filtered = HeatMap.applyFilters(allReports);
+
+      if (filtered.length === 0) {
+        if (typeof Utils !== 'undefined') {
+          Utils.showToast('No reports match filters', 'warning');
+        }
+        return;
+      }
+
+      const bounds = L.latLngBounds(filtered.map(r => [r.latitude, r.longitude]));
+
+      if (HeatMap && HeatMap.map) {
+        HeatMap.map.fitBounds(bounds, {
+          padding: [50, 50],
+          maxZoom: 15
+        });
+      }
+
+      if (typeof Utils !== 'undefined') {
+        Utils.showToast(`Showing ${filtered.length} reports`, 'success');
       }
     }
   </script>
