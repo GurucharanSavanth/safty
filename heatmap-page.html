@@ -175,6 +175,10 @@
       border-radius: 50%;
       border: 2px solid white;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
     }
 
     .stats-bar {
@@ -277,6 +281,7 @@
       color: white;
     }
 
+    /* RESPONSIVE FIXES FOR MOBILE/HANDHELD DEVICES */
     @media (max-width: 768px) {
       .heatmap-header {
         padding: 16px;
@@ -297,17 +302,98 @@
 
       .control-select,
       .control-btn {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         padding: 6px 10px;
       }
 
-      .map-legend,
+      /* FIX: Reduce legend icon sizes on mobile */
+      .legend-color {
+        width: 18px;
+        height: 18px;
+        font-size: 0.7rem;
+      }
+
+      .legend-item {
+        font-size: 0.75rem;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+
+      .legend-title {
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+      }
+
+      .map-legend {
+        padding: 12px;
+        min-width: 160px;
+        bottom: 20px;
+        right: 10px;
+      }
+
+      /* FIX: Reduce stats bar values and positioning */
       .stats-bar {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        padding: 12px;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+      }
+
+      .stat-value {
+        font-size: 1.25rem;
+      }
+
+      .stat-label {
+        font-size: 0.65rem;
+      }
+    }
+
+    /* EXTRA SMALL DEVICES (< 480px) */
+    @media (max-width: 480px) {
+      .heatmap-title {
+        font-size: 1rem;
+      }
+
+      .control-btn, .control-select {
+        font-size: 0.7rem;
+        padding: 5px 8px;
+      }
+
+      /* FIX: Further reduce icon sizes */
+      .legend-color {
+        width: 16px;
+        height: 16px;
+        font-size: 0.65rem;
+      }
+
+      .legend-item {
+        font-size: 0.7rem;
+      }
+
+      .legend-title {
         font-size: 0.8rem;
       }
 
+      .map-legend {
+        padding: 10px;
+        min-width: 140px;
+      }
+
+      /* FIX: Stack stats vertically on very small screens */
       .stats-bar {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        padding: 10px;
+      }
+
+      .stat-value {
+        font-size: 1.1rem;
+      }
+
+      .stat-label {
+        font-size: 0.6rem;
       }
     }
   </style>
@@ -351,7 +437,7 @@
           </select>
         </div>
 
-        <button onclick="toggleHeatmapLayer()" class="control-btn secondary">
+        <button onclick="toggleHeatmapLayer()" class="control-btn secondary" id="toggleHeatmapBtn">
           🔥 Toggle Heatmap
         </button>
 
@@ -432,6 +518,7 @@
 
   <script>
     let allReports = [];
+    let heatmapVisible = true;
 
     // Initialize map and load data
     document.addEventListener('DOMContentLoaded', () => {
@@ -497,7 +584,29 @@
     }
 
     function toggleHeatmapLayer() {
-      HeatMap.toggleHeatmap();
+      if (typeof HeatMap.toggleHeatmap === 'function') {
+        HeatMap.toggleHeatmap();
+        heatmapVisible = !heatmapVisible;
+        
+        // Update button text
+        const btn = document.getElementById('toggleHeatmapBtn');
+        if (btn) {
+          btn.innerHTML = heatmapVisible ? '🔥 Hide Heatmap' : '🔥 Show Heatmap';
+        }
+        
+        // Show feedback
+        if (typeof Utils !== 'undefined') {
+          Utils.showToast(
+            heatmapVisible ? 'Heatmap layer enabled' : 'Heatmap layer disabled',
+            'info'
+          );
+        }
+      } else {
+        console.error('HeatMap.toggleHeatmap function not available');
+        if (typeof Utils !== 'undefined') {
+          Utils.showToast('Heatmap toggle unavailable', 'error');
+        }
+      }
     }
 
     function refreshMap() {
