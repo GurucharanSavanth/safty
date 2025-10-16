@@ -3,287 +3,244 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Staff Login - Citizen Safety Platform</title>
+  <title>Login - Citizen Safety Platform</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/main.css">
+  
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0a0f1e 0%, #1a1f35 100%);
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    }
-    .login-container {
-      width: 100%;
-      max-width: 450px;
       padding: 20px;
     }
-    .login-card {
-      background: var(--bg-secondary);
-      border: 2px solid var(--bg-tertiary);
-      border-radius: 20px;
-      padding: 40px;
+
+    .login-container {
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(51, 65, 85, 0.5);
+      border-radius: 24px;
+      padding: 48px;
+      width: 100%;
+      max-width: 450px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     }
+
     .login-header {
       text-align: center;
-      margin-bottom: 32px;
+      margin-bottom: 40px;
     }
-    .login-title {
+
+    .login-header h1 {
       font-size: 2rem;
-      font-weight: 800;
-      color: var(--text-primary);
+      color: #f1f5f9;
       margin-bottom: 8px;
     }
-    .login-subtitle {
-      color: var(--text-secondary);
-      font-size: 0.95rem;
+
+    .login-header p {
+      color: #94a3b8;
+      font-size: 0.875rem;
     }
+
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
+
     .form-label {
       display: block;
       margin-bottom: 8px;
       font-weight: 600;
-      color: var(--text-primary);
+      color: #cbd5e1;
     }
+
     .form-input {
       width: 100%;
-      padding: 12px 16px;
-      background: var(--bg-primary);
-      border: 2px solid var(--bg-tertiary);
-      border-radius: 10px;
-      color: var(--text-primary);
+      padding: 14px;
+      background: rgba(51, 65, 85, 0.5);
+      border: 2px solid #475569;
+      border-radius: 12px;
+      color: #f1f5f9;
       font-size: 1rem;
       transition: all 0.3s;
     }
+
     .form-input:focus {
       outline: none;
       border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
     }
-    .btn {
+
+    .login-btn {
       width: 100%;
       padding: 14px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
+      color: white;
       font-weight: 700;
-      font-size: 1.05rem;
+      font-size: 1rem;
       cursor: pointer;
       transition: all 0.3s;
     }
-    .btn-primary {
-      background: linear-gradient(135deg, #3b82f6, #60a5fa);
-      color: white;
-    }
-    .btn-primary:hover {
+
+    .login-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
     }
-    .btn-primary:disabled {
-      opacity: 0.6;
+
+    .login-btn:disabled {
+      opacity: 0.5;
       cursor: not-allowed;
-      transform: none;
     }
-    .error-message {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid #ef4444;
-      color: #f87171;
+
+    .alert {
       padding: 12px;
       border-radius: 8px;
       margin-bottom: 20px;
-      font-size: 0.875rem;
       display: none;
     }
-    .error-message.show {
-      display: block;
+
+    .alert.error {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
     }
-    .divider {
-      text-align: center;
-      margin: 24px 0;
-      color: var(--text-secondary);
-      position: relative;
+
+    .alert.success {
+      background: rgba(34, 197, 94, 0.2);
+      border: 1px solid #22c55e;
+      color: #86efac;
     }
-    .divider::before,
-    .divider::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      width: 45%;
-      height: 1px;
-      background: var(--bg-tertiary);
-    }
-    .divider::before { left: 0; }
-    .divider::after { right: 0; }
+
     .back-link {
       text-align: center;
-      margin-top: 20px;
+      margin-top: 24px;
     }
+
     .back-link a {
       color: #3b82f6;
       text-decoration: none;
       font-weight: 600;
     }
-    .back-link a:hover {
-      text-decoration: underline;
+
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 32px 24px;
+      }
     }
   </style>
 </head>
 <body>
 
   <div class="login-container">
-    <div class="login-card">
-      <div class="login-header">
-        <div style="font-size: 3rem; margin-bottom: 16px;">🔐</div>
-        <h1 class="login-title">Staff Login</h1>
-        <p class="login-subtitle">Access your personalized dashboard</p>
+    <div class="login-header">
+      <h1>🛡️ Welcome Back</h1>
+      <p>Citizen Safety Platform</p>
+    </div>
+
+    <div id="alert" class="alert"></div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input type="text" id="username" class="form-input" placeholder="Enter username" required autofocus>
       </div>
 
-      <div id="errorMessage" class="error-message"></div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" id="password" class="form-input" placeholder="Enter password" required>
+      </div>
 
-      <form id="loginForm">
-        <div class="form-group">
-          <label class="form-label" for="username">Username</label>
-          <input 
-            type="text" 
-            id="username" 
-            class="form-input" 
-            placeholder="Enter your username"
-            required
-            autocomplete="username"
-          >
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="password">Password</label>
-          <input 
-            type="password" 
-            id="password" 
-            class="form-input" 
-            placeholder="Enter your password"
-            required
-            autocomplete="current-password"
-          >
-        </div>
-
-        <button type="submit" class="btn btn-primary" id="loginBtn">
-          🚀 Login
-        </button>
-      </form>
-
-      <div class="divider">OR</div>
-
-      <button onclick="loginAsAdmin()" class="btn btn-primary" style="background: linear-gradient(135deg, #8b5cf6, #a78bfa);">
-        👑 Login as Admin
+      <button type="submit" class="login-btn" id="loginBtn">
+        🔐 Sign In
       </button>
+    </form>
 
-      <div class="back-link">
-        <a href="index.html">← Back to Home</a>
-      </div>
+    <div class="back-link">
+      <a href="index.html">← Back to Home</a>
     </div>
   </div>
 
-  <!-- Load Scripts -->
   <script src="js/profile-manager.js"></script>
 
   <script>
-    // Login form handler - FIXED
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    const loginForm = document.getElementById('loginForm');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const loginBtn = document.getElementById('loginBtn');
+    const alertBox = document.getElementById('alert');
+
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      await handleLogin();
-    });
+      
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
 
-    async function handleLogin() {
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value;
-      const loginBtn = document.getElementById('loginBtn');
-      const errorDiv = document.getElementById('errorMessage');
-
-      // Validation
       if (!username || !password) {
-        showError('Please enter both username and password');
+        showAlert('Please enter both username and password', 'error');
         return;
       }
 
-      // Check if ProfileManager is loaded
-      if (typeof ProfileManager === 'undefined') {
-        showError('System not ready. Please refresh the page.');
-        return;
-      }
-
-      // Disable button
       loginBtn.disabled = true;
-      loginBtn.textContent = '🔄 Logging in...';
-      hideError();
+      loginBtn.textContent = '🔄 Signing in...';
 
       try {
-        // Authenticate
-        const result = await ProfileManager.authenticate(username, password);
+        const result = ProfileManager.login(username, password);
 
         if (result.success) {
-          // Success
-          loginBtn.textContent = '✅ Success!';
+          showAlert('Login successful! Redirecting...', 'success');
           
-          // Redirect based on role
-          if (result.isAdmin || result.user.role === 'admin') {
-            window.location.href = 'admin-dashboard.html';
-          } else {
-            window.location.href = 'profile-dashboard.html';
-          }
+          setTimeout(() => {
+            // Redirect based on role
+            if (['superadmin', 'admin'].includes(result.profile.role)) {
+              window.location.href = 'admin-dashboard.html';
+            } else {
+              window.location.href = 'profile-dashboard.html';
+            }
+          }, 1000);
+
         } else {
-          // Failed
-          showError(result.error || 'Login failed. Please try again.');
+          showAlert(result.error || 'Login failed', 'error');
           loginBtn.disabled = false;
-          loginBtn.textContent = '🚀 Login';
+          loginBtn.textContent = '🔐 Sign In';
         }
+
       } catch (error) {
-        console.error('Login error:', error);
-        showError('An error occurred. Please try again.');
+        showAlert('An error occurred. Please try again.', 'error');
         loginBtn.disabled = false;
-        loginBtn.textContent = '🚀 Login';
+        loginBtn.textContent = '🔐 Sign In';
       }
-    }
+    });
 
-    async function loginAsAdmin() {
-      const loginBtn = document.getElementById('loginBtn');
-      loginBtn.disabled = true;
-      hideError();
+    function showAlert(message, type) {
+      alertBox.textContent = message;
+      alertBox.className = `alert ${type}`;
+      alertBox.style.display = 'block';
 
-      // Auto-fill admin credentials
-      document.getElementById('username').value = 'admin';
-      document.getElementById('password').value = 'admin123';
-
-      // Trigger login
-      await handleLogin();
-    }
-
-    function showError(message) {
-      const errorDiv = document.getElementById('errorMessage');
-      errorDiv.textContent = message;
-      errorDiv.classList.add('show');
-    }
-
-    function hideError() {
-      const errorDiv = document.getElementById('errorMessage');
-      errorDiv.classList.remove('show');
+      if (type === 'success') {
+        setTimeout(() => {
+          alertBox.style.display = 'none';
+        }, 3000);
+      }
     }
 
     // Check if already logged in
-    window.addEventListener('DOMContentLoaded', () => {
-      if (typeof ProfileManager !== 'undefined' && ProfileManager.isAuthenticated()) {
-        const user = ProfileManager.getCurrentUser();
-        if (user) {
-          // Already logged in, redirect
-          if (ProfileManager.isAdmin()) {
-            window.location.href = 'admin-dashboard.html';
-          } else {
-            window.location.href = 'profile-dashboard.html';
-          }
-        }
+    if (ProfileManager.isAuthenticated()) {
+      const user = ProfileManager.getCurrentUser();
+      if (['superadmin', 'admin'].includes(user.role)) {
+        window.location.href = 'admin-dashboard.html';
+      } else {
+        window.location.href = 'profile-dashboard.html';
       }
-    });
+    }
   </script>
 
 </body>
