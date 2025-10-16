@@ -1,6 +1,7 @@
 // ================================================
 // ADMIN DASHBOARD - COMPLETE JAVASCRIPT
 // Features: Report Management, AI Generation, Status Updates, User/Role Management
+// ✅ PATCHED: loadAllReports() now displays image thumbnails
 // ================================================
 
 let currentUser = null;
@@ -271,7 +272,7 @@ function deleteRole(roleKey) {
 }
 
 // ================================================
-// SECTION 5: REPORT MANAGEMENT (CLICKABLE WITH DETAILS)
+// ✅ SECTION 5: REPORT MANAGEMENT WITH IMAGE THUMBNAILS (PATCHED)
 // ================================================
 
 function loadAllReports() {
@@ -289,38 +290,64 @@ function loadAllReports() {
       return;
     }
 
-    container.innerHTML = allReports.map(report => `
-      <div onclick="openReportDetail('${report.id}', '${report.type}')" 
-           style="padding: 20px; background: rgba(51, 65, 85, 0.3); border: 2px solid rgba(71, 85, 105, 0.5); border-radius: 12px; cursor: pointer; transition: all 0.3s;"
-           onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.3)'"
-           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-        <div style="display: flex; justify-content: space-between; align-items: start;">
-          <div style="flex: 1;">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-              <span style="font-size: 1.5rem;">${report.type === 'police' ? '🚔' : report.type === 'medical' ? '🚑' : '🏗️'}</span>
-              <div>
-                <div style="font-weight: 700; font-size: 1.1rem;">${report.id}</div>
-                <div style="color: #94a3b8; font-size: 0.875rem;">${report.type.toUpperCase()}</div>
-              </div>
-            </div>
-            <div style="color: #cbd5e1; margin-top: 8px; line-height: 1.5;">
-              ${(report.description || report.details || 'No description').substring(0, 150)}${(report.description || report.details || '').length > 150 ? '...' : ''}
-            </div>
-            ${report.location && report.location.latitude ? `
-              <div style="color: #94a3b8; font-size: 0.875rem; margin-top: 8px;">
-                📍 ${report.location.latitude.toFixed(4)}, ${report.location.longitude.toFixed(4)}
+    container.innerHTML = allReports.map(report => {
+      // ✅ IMAGE FIX: Handle both photo (single) and images (array)
+      let imageList = [];
+      if (report.images && Array.isArray(report.images) && report.images.length > 0) {
+        imageList = report.images;
+      } else if (report.photo) {
+        imageList = [report.photo];
+      }
+      const hasImages = imageList.length > 0;
+      const firstImage = hasImages ? imageList[0] : null;
+      const imageCount = imageList.length;
+
+      return `
+        <div onclick="openReportDetail('${report.id}', '${report.type}')" 
+             style="padding: 20px; background: rgba(51, 65, 85, 0.3); border: 2px solid rgba(71, 85, 105, 0.5); border-radius: 12px; cursor: pointer; transition: all 0.3s;"
+             onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.3)'"
+             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+          <div style="display: flex; gap: 16px; align-items: start;">
+            ${firstImage ? `
+              <div style="flex-shrink: 0; position: relative;">
+                <img src="${firstImage}" alt="Report" 
+                     style="width: 120px; height: 120px; object-fit: cover; border-radius: 8px; border: 2px solid #475569;">
+                ${imageCount > 1 ? `
+                  <span style="position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.8); color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 700;">
+                    +${imageCount - 1} 📸
+                  </span>
+                ` : ''}
               </div>
             ` : ''}
-          </div>
-          <div style="text-align: right;">
-            <span class="status-badge status-${report.status || 'pending'}">${report.status || 'pending'}</span>
-            <div style="color: #94a3b8; font-size: 0.75rem; margin-top: 8px;">
-              ${new Date(report.createdAt).toLocaleDateString()}
+
+            <div style="flex: 1;">
+              <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                <span style="font-size: 1.5rem;">${report.type === 'police' ? '🚔' : report.type === 'medical' ? '🚑' : '🏗️'}</span>
+                <div>
+                  <div style="font-weight: 700; font-size: 1.1rem;">${report.id}</div>
+                  <div style="color: #94a3b8; font-size: 0.875rem;">${report.type.toUpperCase()}</div>
+                </div>
+              </div>
+              <div style="color: #cbd5e1; margin-top: 8px; line-height: 1.5;">
+                ${(report.description || report.details || 'No description').substring(0, 150)}${(report.description || report.details || '').length > 150 ? '...' : ''}
+              </div>
+              ${report.location && report.location.latitude ? `
+                <div style="color: #94a3b8; font-size: 0.875rem; margin-top: 8px;">
+                  📍 ${report.location.latitude.toFixed(4)}, ${report.location.longitude.toFixed(4)}
+                </div>
+              ` : ''}
+            </div>
+
+            <div style="text-align: right; flex-shrink: 0;">
+              <span class="status-badge status-${report.status || 'pending'}">${report.status || 'pending'}</span>
+              <div style="color: #94a3b8; font-size: 0.75rem; margin-top: 8px;">
+                ${new Date(report.createdAt).toLocaleDateString()}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   } catch (error) {
     console.error('Error loading reports:', error);
   }
@@ -337,23 +364,19 @@ function openReportDetail(reportId, reportType) {
 
   currentReportDetail = { id: reportId, type: reportType, data: report };
 
-  // Set basic info
   document.getElementById('detailReportId').textContent = report.id;
   document.getElementById('detailReportType').textContent = reportType.toUpperCase();
   document.getElementById('detailDescription').textContent = report.description || report.details || 'No description provided';
   document.getElementById('detailCreatedAt').textContent = new Date(report.createdAt).toLocaleString();
 
-  // Set status
   const statusSpan = document.getElementById('currentStatus');
   statusSpan.textContent = report.status || 'pending';
   statusSpan.className = `status-badge status-${report.status || 'pending'}`;
   document.getElementById('statusSelect').value = report.status || 'pending';
 
-  // Show/hide status update based on permissions
   const canUpdate = ProfileManager.hasPermission(currentUser, 'update');
   document.getElementById('statusUpdateSection').style.display = canUpdate ? 'block' : 'none';
 
-  // Set location
   if (report.location || report.geolocation) {
     const loc = report.location || report.geolocation;
     if (typeof loc === 'object' && loc.latitude && loc.longitude) {
@@ -364,7 +387,6 @@ function openReportDetail(reportId, reportType) {
         ${loc.address ? `<br><br><strong>Address:</strong><br>${loc.address}` : ''}
       `;
 
-      // Show Google Maps link
       document.getElementById('geotagSection').style.display = 'block';
       document.getElementById('googleMapsLink').href = 
         `https://www.google.com/maps?q=${loc.latitude},${loc.longitude}`;
@@ -377,7 +399,6 @@ function openReportDetail(reportId, reportType) {
     document.getElementById('locationSection').style.display = 'none';
   }
 
-  // Set images
   if (report.images && report.images.length > 0) {
     document.getElementById('imagesSection').style.display = 'block';
     document.getElementById('detailImages').innerHTML = report.images.map(img => `
@@ -389,7 +410,6 @@ function openReportDetail(reportId, reportType) {
     document.getElementById('imagesSection').style.display = 'none';
   }
 
-  // Set audio
   if (report.audioUrl || report.audioData) {
     document.getElementById('audioSection').style.display = 'block';
     document.getElementById('detailAudio').src = report.audioUrl || report.audioData;
@@ -397,7 +417,6 @@ function openReportDetail(reportId, reportType) {
     document.getElementById('audioSection').style.display = 'none';
   }
 
-  // Set updated date
   if (report.updatedAt) {
     document.getElementById('detailUpdatedAtSection').style.display = 'block';
     document.getElementById('detailUpdatedAt').textContent = new Date(report.updatedAt).toLocaleString();
@@ -417,16 +436,70 @@ function updateReportStatus() {
   if (result) {
     alert('✅ Status updated successfully!');
 
-    // Update the display
     const statusSpan = document.getElementById('currentStatus');
     statusSpan.textContent = newStatus;
     statusSpan.className = `status-badge status-${newStatus}`;
 
-    // Refresh lists
     loadAllReports();
     loadStatistics();
   } else {
     alert('❌ Failed to update status');
+  }
+}
+// ✅ Delete current report (with confirmation)
+function deleteCurrentReport() {
+  if (!currentReportDetail) {
+    alert('No report selected');
+    return;
+  }
+
+  const reportId = currentReportDetail.id;
+  const reportType = currentReportDetail.type;
+
+  // Show confirmation dialog
+  const confirmed = confirm(
+    `⚠️ DELETE REPORT?\n\n` +
+    `Report ID: ${reportId}\n` +
+    `Type: ${reportType.toUpperCase()}\n\n` +
+    `This action cannot be undone!\n\n` +
+    `Are you sure you want to delete this report?`
+  );
+
+  if (!confirmed) {
+    console.log('Delete cancelled by user');
+    return;
+  }
+
+  try {
+    console.log('🗑️ Attempting to delete report:', reportId, reportType);
+
+    // Delete from storage
+    const success = Storage.deleteReport(reportType, reportId);
+
+    if (success) {
+      console.log('✅ Report deleted successfully');
+      
+      // Show success message
+      alert('✅ Report deleted successfully!');
+      
+      // Close the modal
+      closeModal('reportDetailModal');
+      
+      // Refresh the reports list
+      loadAllReports();
+      loadStatistics();
+      
+      // Clear current detail
+      currentReportDetail = null;
+      
+    } else {
+      console.error('❌ Failed to delete report');
+      alert('❌ Failed to delete report. Please try again.');
+    }
+    
+  } catch (error) {
+    console.error('❌ Error deleting report:', error);
+    alert('❌ Error deleting report: ' + error.message);
   }
 }
 
@@ -445,7 +518,6 @@ async function generateReport() {
 
   closeModal('reportGenerationModal');
 
-  // Show loading message
   const loadingMsg = document.createElement('div');
   loadingMsg.id = 'generatingMsg';
   loadingMsg.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(30, 41, 59, 0.95); padding: 32px; border-radius: 16px; z-index: 20000; text-align: center; border: 2px solid #3b82f6;';
@@ -453,19 +525,16 @@ async function generateReport() {
   document.body.appendChild(loadingMsg);
 
   try {
-    // Get all reports
     const allReports = [
       ...Storage.getAllReports('police').map(r => ({...r, type: 'police'})),
       ...Storage.getAllReports('medical').map(r => ({...r, type: 'medical'})),
       ...Storage.getAllReports('infrastructure').map(r => ({...r, type: 'infrastructure'}))
     ];
 
-    // Filter by date range
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - dateRange);
     const filteredReports = allReports.filter(r => new Date(r.createdAt) >= cutoffDate);
 
-    // Generate comprehensive report
     const generatedReport = {
       id: 'AI_REPORT_' + Date.now(),
       generatedAt: new Date().toISOString(),
@@ -489,21 +558,14 @@ async function generateReport() {
       trends: analyzeTrends(filteredReports)
     };
 
-    // Save to localStorage
     const existingReports = JSON.parse(localStorage.getItem('ai_generated_reports') || '[]');
     existingReports.unshift(generatedReport);
     localStorage.setItem('ai_generated_reports', JSON.stringify(existingReports));
 
-    // Remove loading message
     document.body.removeChild(loadingMsg);
-
-    // Show success
     alert('✅ AI Report generated successfully! View it in the Analytics tab.');
 
-    // Update analytics
     loadAnalytics();
-
-    // Switch to analytics tab
     switchTab('analytics');
 
   } catch (error) {
@@ -811,7 +873,6 @@ function exportReports() {
       return;
     }
 
-    // Create CSV
     const csv = ['ID,Type,Status,Location,Created At\n'];
     allReports.forEach(r => {
       const loc = r.location && r.location.latitude ? 
@@ -839,7 +900,6 @@ function exportReports() {
 // ================================================
 
 function setupEventListeners() {
-  // User form submission
   document.getElementById('userForm').addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -872,7 +932,6 @@ function setupEventListeners() {
     }
   });
 
-  // Role form submission
   document.getElementById('roleForm').addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -909,7 +968,6 @@ function setupEventListeners() {
     }
   });
 
-  // Close modals on outside click
   document.querySelectorAll('.modal').forEach(modal => {
     modal.addEventListener('click', (e) => {
       if (e.target === modal) {
@@ -918,11 +976,10 @@ function setupEventListeners() {
     });
   });
 
-  // Report type change handler
   document.getElementById('reportType')?.addEventListener('change', (e) => {
     document.getElementById('dateRangeGroup').style.display = 
       e.target.value === 'custom' ? 'block' : 'none';
   });
 }
 
-console.log('✅ Admin Dashboard JavaScript loaded successfully');
+console.log('✅ Admin Dashboard JavaScript loaded successfully - WITH IMAGE THUMBNAILS');

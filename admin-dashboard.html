@@ -545,7 +545,16 @@
               <option value="resolved">Resolved</option>
             </select>
             <button class="action-btn success" onclick="updateReportStatus()" style="padding: 8px 16px;">Update Status</button>
+			<!-- ✅ ADD THIS: Delete Button -->
+			<button onclick="deleteCurrentReport()" 
+					style="padding: 8px 16px; background: linear-gradient(135deg, #ef4444, #dc2626); border: none; border-radius: 8px; color: white; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.3s;"
+					onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(239, 68, 68, 0.4)'"
+					onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+			  🗑️ Delete Report
+			</button>
+			
           </div>
+		  
         </div>
 
         <div id="locationSection" style="background: rgba(51, 65, 85, 0.3); padding: 16px; border-radius: 8px; margin-bottom: 20px;">

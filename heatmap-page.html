@@ -848,26 +848,70 @@
       });
     });
 
-    // PRESERVE ORIGINAL FUNCTION - DO NOT MODIFY
+    // ✅ FIXED: Load all reports with proper location extraction
     function loadAllReports() {
       if (typeof Storage === 'undefined') {
         console.error('Storage module not loaded');
         return;
       }
 
-      allReports = [
-        ...Storage.getAllReports('police'),
-        ...Storage.getAllReports('medical'),
-        ...Storage.getAllReports('infrastructure')
-      ];
+      // Get raw reports from Storage
+      const rawPolice = Storage.getAllReports('police') || [];
+      const rawMedical = Storage.getAllReports('medical') || [];
+      const rawInfra = Storage.getAllReports('infrastructure') || [];
 
-      console.log(`📊 Loaded ${allReports.length} total reports`);
+      console.log('📊 Raw reports loaded:', {
+        police: rawPolice.length,
+        medical: rawMedical.length,
+        infrastructure: rawInfra.length
+      });
+
+      // ✅ FIX: Extract location data correctly
+      allReports = [
+        ...rawPolice.map(r => extractLocationData(r, 'police')),
+        ...rawMedical.map(r => extractLocationData(r, 'medical')),
+        ...rawInfra.map(r => extractLocationData(r, 'infrastructure'))
+      ].filter(r => r.latitude !== undefined && r.longitude !== undefined);
+
+      console.log(`✅ Processed ${allReports.length} reports with valid locations`);
 
       // Update statistics
       updateStatistics();
 
-      // Load into map with current filters - EXACT ORIGINAL CODE
-      HeatMap.loadReports(allReports, true);
+      // Load into map with current filters
+      if (typeof HeatMap !== 'undefined' && HeatMap.loadReports) {
+        HeatMap.loadReports(allReports, true);
+      }
+    }
+
+    // ✅ NEW HELPER: Extract location data from reports
+    function extractLocationData(report, type) {
+      // Check both 'location' and 'geolocation' properties
+      const loc = report.location || report.geolocation;
+
+      if (!loc) {
+        console.warn('⚠️ Report missing location:', report.id);
+        return { ...report, type, latitude: undefined, longitude: undefined };
+      }
+
+      // Extract latitude and longitude
+      const latitude = loc.latitude || loc.lat;
+      const longitude = loc.longitude || loc.lng || loc.lon;
+
+      if (latitude === undefined || longitude === undefined) {
+        console.warn('⚠️ Report has invalid coordinates:', report.id);
+        return { ...report, type, latitude: undefined, longitude: undefined };
+      }
+
+      // Return report with flattened location data for heatmap.js
+      return {
+        ...report,
+        type,
+        latitude: parseFloat(latitude),
+        longitude: parseFloat(longitude),
+        // Keep original location object
+        location: loc
+      };
     }
 
     // PRESERVE ORIGINAL FUNCTION - DO NOT MODIFY
@@ -1103,6 +1147,8 @@
         Utils.showToast(`Showing ${filtered.length} reports`, 'success');
       }
     }
+
+    console.log('✅ Heatmap page script loaded with location fix');
   </script>
 
 </body>
