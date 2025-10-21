@@ -6,7 +6,7 @@
   <title>SafeCity - Instant Incident Reporting</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles/main.css">
-  
+
   <style>
     /* Additional styles for improved UI */
     body {
@@ -302,9 +302,9 @@
       <span>🛡️</span>
       <span>Making Communities Safer</span>
     </div>
-    
+
     <h1 class="hero-title-modern">Report. Track. Resolve.</h1>
-    
+
     <p class="hero-subtitle-modern">
       Instant incident reporting with AI-powered analytics and real-time tracking
     </p>
@@ -380,14 +380,25 @@
     <p style="font-size: 0.75rem; margin-top: 16px;">&copy; 2025 Citizen Safety Platform. All rights reserved.</p>
   </footer>
 
-  <!-- Scripts -->
+  <!-- ✅ FIXED: Scripts in correct order -->
+  <!-- Core Utilities -->
   <script src="js/utils.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/geolocation.js"></script>
+  <script src="js/modal.js"></script>
+  <script src="js/notifications.js"></script>
   <script src="js/media.js"></script>
+
+  <!-- Hospital Finder Dependencies (MUST BE BEFORE medical.js) -->
+  <script src="js/prim-algorithm.js"></script>
+  <script src="js/hospital-finder.js"></script>
+
+  <!-- Report Modules -->
   <script src="js/police.js"></script>
   <script src="js/medical.js"></script>
   <script src="js/infrastructure.js"></script>
+
+  <!-- Other Modules -->
   <script src="js/profile-manager.js"></script>
   <script src="js/admin.js"></script>
   <script src="js/main.js"></script>
@@ -406,7 +417,7 @@
         if (typeof Storage === 'undefined') return;
 
         const stats = Storage.getStatistics();
-        
+
         document.getElementById('statPolice').textContent = stats.police || 0;
         document.getElementById('statMedical').textContent = stats.medical || 0;
         document.getElementById('statInfra').textContent = stats.infrastructure || 0;

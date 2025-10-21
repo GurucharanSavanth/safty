@@ -1,0 +1,101 @@
+/* ================================================
+   HOSPITAL FINDER - CSS ADDITIONS
+   Add to your main.css file
+   ================================================ */
+
+/* Pulse animation for critical severity */
+@keyframes pulse {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 1; 
+  }
+  50% { 
+    transform: scale(1.05); 
+    opacity: 0.8; 
+  }
+}
+
+/* Notified button state */
+button[data-notify-id].notified,
+button[id^="notify-btn-"]:disabled {
+  background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+  cursor: not-allowed !important;
+  opacity: 0.7 !important;
+}
+
+/* Hospital modal buttons hover effects */
+.hospital-modal-btn {
+  transition: all 0.3s ease;
+}
+
+.hospital-modal-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.hospital-modal-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Loading state for hospital search */
+.hospital-loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(59, 130, 246, 0.3);
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Hospital card hover effect */
+.hospital-card {
+  transition: all 0.3s ease;
+}
+
+.hospital-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Toast notification styles (if not already present) */
+.toast-notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 16px 24px;
+  background: rgba(30, 41, 59, 0.95);
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  animation: slideIn 0.3s ease;
+}
+
+.toast-notification.success {
+  border-left: 4px solid #22c55e;
+}
+
+.toast-notification.error {
+  border-left: 4px solid #ef4444;
+}
+
+.toast-notification.info {
+  border-left: 4px solid #3b82f6;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
